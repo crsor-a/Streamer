@@ -25,6 +25,7 @@ import { MediaItem } from "@/utils/mediaTypes";
 
 import { Button } from "./About";
 import { AdsPart } from "./parts/home/AdsPart";
+import { RevivalAnnouncementModal } from "./parts/home/RevivalAnnouncementModal";
 import { SupportBar } from "./parts/home/SupportBar";
 
 function useSearch(search: string) {
@@ -172,6 +173,7 @@ export function HomePage() {
           />
         )}
 
+        <RevivalAnnouncementModal />
         {conf().SHOW_SUPPORT_BAR ? <SupportBar /> : null}
 
         {conf().SHOW_AD ? <AdsPart /> : null}

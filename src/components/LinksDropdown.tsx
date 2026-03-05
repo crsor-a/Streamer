@@ -10,6 +10,7 @@ import { getRoomStatuses } from "@/backend/player/status";
 import { UserAvatar } from "@/components/Avatar";
 import { Icon, Icons } from "@/components/Icon";
 import { Spinner } from "@/components/layout/Spinner";
+import { useModal } from "@/components/overlays/Modal";
 import { Transition } from "@/components/utils/Transition";
 import { useAuth } from "@/hooks/auth/useAuth";
 import { useBackendUrl } from "@/hooks/auth/useBackendUrl";
@@ -209,6 +210,7 @@ function WatchPartyInputLink() {
 export function LinksDropdown(props: { children: React.ReactNode }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const revivalModal = useModal("revival-announcement");
   const deviceName = useAuthStore((s) => s.account?.deviceName);
   const seed = useAuthStore((s) => s.account?.seed);
   const bufferSeed = useMemo(
@@ -323,6 +325,15 @@ export function LinksDropdown(props: { children: React.ReactNode }) {
           ) : null}
           <DropdownLink href="/about" icon={Icons.CIRCLE_QUESTION}>
             {t("navigation.menu.about")}
+          </DropdownLink>
+          <DropdownLink
+            onClick={() => {
+              revivalModal.show();
+              setOpen(false);
+            }}
+            icon={Icons.RISING_STAR}
+          >
+            P-Stream Revival
           </DropdownLink>
           {!enableLowPerformanceMode && (
             <DropdownLink href="/discover" icon={Icons.RISING_STAR}>
