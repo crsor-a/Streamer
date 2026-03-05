@@ -171,12 +171,10 @@ export function decodeTMDBId(
 const tmdbBaseUrl1 = "https://api.themoviedb.org/3/";
 const tmdbBaseUrl2 = "https://api.tmdb.org/3/";
 
-const apiKey = conf().TMDB_READ_API_KEY;
-
-const tmdbHeaders = {
-  accept: "application/json",
-  Authorization: `Bearer ${apiKey}`,
-};
+// v4 read tokens are JWTs (3 dot-separated base64 segments), v3 keys are short alphanumeric strings
+function isV4Token(key: string): boolean {
+  return key.split(".").length === 3;
+}
 
 // Cache for TMDB API responses
 interface TMDBCacheKey {
@@ -217,7 +215,13 @@ export async function get<T>(url: string, params?: object): Promise<T> {
   const userLanguage = useLanguageStore.getState().language;
   const formattedLanguage = getTmdbLanguageCode(userLanguage);
 
+  const apiKey = conf().TMDB_READ_API_KEY;
   if (!apiKey) throw new Error("TMDB API key not set");
+
+  const tmdbHeaders: Record<string, string> = { accept: "application/json" };
+  if (isV4Token(apiKey)) {
+    tmdbHeaders.Authorization = `Bearer ${apiKey}`;
+  }
 
   // Check cache first
   const cacheKey: TMDBCacheKey = {
@@ -236,6 +240,7 @@ export async function get<T>(url: string, params?: object): Promise<T> {
   const allParams = {
     ...params,
     language: formattedLanguage,
+    ...(!isV4Token(apiKey) ? { api_key: apiKey } : {}),
   };
 
   if (allParams) {
