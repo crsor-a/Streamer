@@ -1,8 +1,7 @@
 import { useTranslation } from "react-i18next";
 
-import { FancyModal } from "./Modal";
-import { Button } from "../buttons/Button";
 import { MwLink } from "../text/Link";
+import { FancyModal } from "./Modal";
 
 export function SupportInfoModal({ id }: { id: string }) {
   const { t } = useTranslation();
@@ -17,20 +16,6 @@ export function SupportInfoModal({ id }: { id: string }) {
             {t("home.support.fluxer")}
           </MwLink>
         </p>
-
-        <div className="space-y-3">
-          <span className="text-center flex justify-center whitespace-nowrap items-center">
-            <Button
-              theme="purple"
-              onClick={() =>
-                window.open("https://rentry.co/nnqtas3e", "_blank")
-              }
-            >
-              {t("home.support.donate")}
-            </Button>
-          </span>
-        </div>
-
         <div className="text-xs text-type-dimmed text-center">
           {t("home.support.thankYou")}
         </div>

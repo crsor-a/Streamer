@@ -84,9 +84,6 @@ export function Footer() {
           <FooterLink icon={Icons.DISCORD} href={conf().DISCORD_LINK}>
             {t("footer.links.fluxer")}/Discord
           </FooterLink>
-          <FooterLink href="https://rentry.co/nnqtas3e" icon={Icons.TIP_JAR}>
-            {t("footer.links.funding")}
-          </FooterLink>
           <div className="inline md:hidden">
             <Legal />
           </div>

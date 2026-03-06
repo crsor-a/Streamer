@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 
 import { Icon, Icons } from "@/components/Icon";
 import { SettingsCard } from "@/components/layout/SettingsCard";
-import { MwLink } from "@/components/text/Link";
 import { Heading3 } from "@/components/utils/Text";
 import { conf } from "@/setup/config";
 import { useOverlayStack } from "@/stores/interface/overlayStack";
@@ -26,14 +25,6 @@ function setCookie(name: string, value: string, expiryDays: number): void {
   document.cookie = `${name}=${value};${expires};path=/`;
 }
 
-const donationCallout = (
-  <p className="text-sm text-type-dimmed text-center pt-3 border-t border-white border-opacity-10 mt-1">
-    The original creator of P-Stream has stepped back from the project — if it
-    brought you value,{" "}
-    <MwLink url="https://rentry.co/nnqtas3e">consider supporting them</MwLink>.
-  </p>
-);
-
 export function SupportBar() {
   const { t } = useTranslation();
   const { showModal } = useOverlayStack();
@@ -52,16 +43,7 @@ export function SupportBar() {
   }, [showModal]);
 
   const supportValue = conf().SUPPORT_BAR_VALUE;
-
-  if (!supportValue) {
-    return (
-      <div className="w-full px-4 py-2">
-        <div className="flex flex-col items-center">
-          <SettingsCard className="max-w-md">{donationCallout}</SettingsCard>
-        </div>
-      </div>
-    );
-  }
+  if (!supportValue) return null;
 
   const [currentStr, goalStr] = supportValue.split("/");
   const current = parseFloat(currentStr) || 0;
@@ -132,13 +114,7 @@ export function SupportBar() {
                 {t("home.support.moreInfo")}
               </button>
             </span>
-            <span className="ml-auto text-right flex-shrink-0 whitespace-nowrap">
-              <MwLink url="https://rentry.co/nnqtas3e">
-                {t("home.support.donate")}
-              </MwLink>
-            </span>
           </div>
-          {donationCallout}
         </SettingsCard>
       </div>
     </div>
