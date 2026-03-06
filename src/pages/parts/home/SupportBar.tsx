@@ -26,6 +26,14 @@ function setCookie(name: string, value: string, expiryDays: number): void {
   document.cookie = `${name}=${value};${expires};path=/`;
 }
 
+const donationCallout = (
+  <p className="text-sm text-type-dimmed text-center pt-3 border-t border-white border-opacity-10 mt-1">
+    The original creator of P-Stream has stepped back from the project — if it
+    brought you value,{" "}
+    <MwLink url="https://rentry.co/nnqtas3e">consider supporting them</MwLink>.
+  </p>
+);
+
 export function SupportBar() {
   const { t } = useTranslation();
   const { showModal } = useOverlayStack();
@@ -36,7 +44,7 @@ export function SupportBar() {
   const toggleDescription = useCallback(() => {
     const newState = !isDescriptionDismissed;
     setIsDescriptionDismissed(newState);
-    setCookie("supportDescriptionDismissed", newState ? "true" : "false", 14); // Expires after 14 days
+    setCookie("supportDescriptionDismissed", newState ? "true" : "false", 14);
   }, [isDescriptionDismissed]);
 
   const openSupportModal = useCallback(() => {
@@ -44,13 +52,20 @@ export function SupportBar() {
   }, [showModal]);
 
   const supportValue = conf().SUPPORT_BAR_VALUE;
-  if (!supportValue) return null;
 
-  // Parse fraction like "100/300"
+  if (!supportValue) {
+    return (
+      <div className="w-full px-4 py-2">
+        <div className="flex flex-col items-center">
+          <SettingsCard className="max-w-md">{donationCallout}</SettingsCard>
+        </div>
+      </div>
+    );
+  }
+
   const [currentStr, goalStr] = supportValue.split("/");
   const current = parseFloat(currentStr) || 0;
   const goal = parseFloat(goalStr) || 1;
-
   const percentage = Math.min((current / goal) * 100, 100);
 
   return (
@@ -99,7 +114,6 @@ export function SupportBar() {
           </div>
           <div className="w-full max-w-md">
             <div className="relative w-full h-2 bg-progress-background bg-opacity-25 rounded-full">
-              {/* Progress bar */}
               <div
                 className="absolute top-0 left-0 h-full rounded-full bg-progress-filled transition-all duration-300"
                 style={{
@@ -124,6 +138,7 @@ export function SupportBar() {
               </MwLink>
             </span>
           </div>
+          {donationCallout}
         </SettingsCard>
       </div>
     </div>
