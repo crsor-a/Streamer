@@ -50,11 +50,15 @@ export function RevivalAnnouncementModal() {
                   </button>
                 </div>
                 <div className="space-y-4 text-base text-type-secondary">
+                  <p className="text-white font-bold border-l-2 border-white pl-3">
+                    This is a fork of the original P-Stream. XP Technologies
+                    holds no ownership over the original project and makes no
+                    claim to it.
+                  </p>
                   <p>
-                    P-Stream has been revived. The original main contributor has
-                    stepped down and will no longer be responsible for any
-                    public hosting of this project — we respect their decision
-                    and wish to keep their identity private.
+                    The original main contributor has stepped down and will no
+                    longer be responsible for any public hosting. We respect
+                    their decision and wish to keep their identity private.
                   </p>
                   <p>
                     The XP Technologies team has taken on the responsibility of
