@@ -10,19 +10,33 @@ import {
   tertiaryOptions,
 } from "@themes/custom";
 
+export interface SavedCustomTheme {
+  id: string;
+  name: string;
+  primary: string;
+  secondary: string;
+  tertiary: string;
+}
+
 export interface ThemeStore {
   theme: string | null;
   customTheme: {
+    // kept for backwards compat or default 'custom'
     primary: string;
     secondary: string;
     tertiary: string;
   };
+  savedCustomThemes: SavedCustomTheme[];
+  hiddenDefaultThemes: string[];
   setTheme(v: string | null): void;
   setCustomTheme(v: {
     primary: string;
     secondary: string;
     tertiary: string;
   }): void;
+  saveCustomTheme(v: SavedCustomTheme): void;
+  deleteCustomTheme(id: string): void;
+  hideDefaultTheme(id: string): void;
 }
 
 const currentDate = new Date();
@@ -40,6 +54,8 @@ export const useThemeStore = create(
         secondary: "classic",
         tertiary: "classic",
       },
+      savedCustomThemes: [],
+      hiddenDefaultThemes: [],
       setTheme(v) {
         set((s) => {
           s.theme = v;
@@ -48,6 +64,31 @@ export const useThemeStore = create(
       setCustomTheme(v) {
         set((s) => {
           s.customTheme = v;
+        });
+      },
+      saveCustomTheme(v) {
+        set((s) => {
+          const existing = s.savedCustomThemes.findIndex((t) => t.id === v.id);
+          if (existing !== -1) s.savedCustomThemes[existing] = v;
+          else s.savedCustomThemes.push(v);
+        });
+      },
+      deleteCustomTheme(id) {
+        set((s) => {
+          s.savedCustomThemes = s.savedCustomThemes.filter((t) => t.id !== id);
+          if (s.theme === id) {
+            s.theme = null; // reset to default if deleted theme was active
+          }
+        });
+      },
+      hideDefaultTheme(id) {
+        set((s) => {
+          if (!s.hiddenDefaultThemes.includes(id)) {
+            s.hiddenDefaultThemes.push(id);
+          }
+          if (s.theme === id) {
+            s.theme = null;
+          }
         });
       },
     })),
@@ -81,6 +122,8 @@ export function ThemeProvider(props: {
   const theme = useThemeStore((s) => s.theme);
   const customTheme = useThemeStore((s) => s.customTheme);
 
+  const savedCustomThemes = useThemeStore((s) => s.savedCustomThemes);
+
   const themeToDisplay = previewTheme ?? theme;
   const themeSelector = themeToDisplay ? `theme-${themeToDisplay}` : undefined;
 
@@ -99,8 +142,25 @@ export function ThemeProvider(props: {
       .map(([k, v]) => `${k}: ${v};`)
       .join(" ");
 
-    styleContent = `.theme-custom { ${cssVars} }`;
+    styleContent += `.theme-custom { ${cssVars} }\n`;
   }
+
+  // Inject CSS rules for all saved custom themes so their previews render correctly
+  savedCustomThemes.forEach((savedTheme) => {
+    const primary =
+      primaryOptions.find((o) => o.id === savedTheme.primary)?.colors || {};
+    const secondary =
+      secondaryOptions.find((o) => o.id === savedTheme.secondary)?.colors || {};
+    const tertiary =
+      tertiaryOptions.find((o) => o.id === savedTheme.tertiary)?.colors || {};
+
+    const vars = { ...primary, ...secondary, ...tertiary };
+    const cssVars = Object.entries(vars)
+      .map(([k, v]) => `${k}: ${v};`)
+      .join(" ");
+
+    styleContent += `.theme-${savedTheme.id} { ${cssVars} }\n`;
+  });
 
   return (
     <div className={themeSelector}>

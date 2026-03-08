@@ -5,9 +5,22 @@ import { AccountWithToken } from "@/stores/auth";
 import { KeyboardShortcuts } from "@/utils/keyboardShortcuts";
 
 export interface CustomThemeSettings {
-  primary: string;
-  secondary: string;
-  tertiary: string;
+  primary?: string;
+  secondary?: string;
+  tertiary?: string;
+  activeTheme?: {
+    primary: string;
+    secondary: string;
+    tertiary: string;
+  };
+  savedCustomThemes?: {
+    id: string;
+    name: string;
+    primary: string;
+    secondary: string;
+    tertiary: string;
+  }[];
+  hiddenDefaultThemes?: string[];
 }
 
 export interface SettingsInput {

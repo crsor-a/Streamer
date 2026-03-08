@@ -6,6 +6,7 @@ import { Button } from "@/components/buttons/Button";
 import { Toggle } from "@/components/buttons/Toggle";
 import { SortableList } from "@/components/form/SortableList";
 import { Icon, Icons } from "@/components/Icon";
+import { CustomThemeModal } from "@/components/overlays/CustomThemeModal";
 import { EditGroupOrderModal } from "@/components/overlays/EditGroupOrderModal";
 import { useModal } from "@/components/overlays/Modal";
 import { Heading1 } from "@/components/utils/Text";
@@ -13,11 +14,6 @@ import { useBackendUrl } from "@/hooks/auth/useBackendUrl";
 import { useAuthStore } from "@/stores/auth";
 import { useBookmarkStore } from "@/stores/bookmarks";
 import { useGroupOrderStore } from "@/stores/groupOrder";
-import {
-  primaryOptions,
-  secondaryOptions,
-  tertiaryOptions,
-} from "@themes/custom";
 
 const availableThemes = [
   {
@@ -135,11 +131,6 @@ const availableThemes = [
     selector: "theme-christmas",
     key: "settings.appearance.themes.christmas",
   },
-  {
-    id: "custom",
-    selector: "theme-custom",
-    key: "settings.appearance.themes.custom",
-  },
 ];
 
 function ThemePreview(props: {
@@ -148,6 +139,8 @@ function ThemePreview(props: {
   inUse?: boolean;
   name: string;
   onClick?: () => void;
+  onDelete?: () => void;
+  onEdit?: () => void;
 }) {
   const { t } = useTranslation();
 
@@ -222,6 +215,34 @@ function ThemePreview(props: {
       </div>
       <div className="mt-2 flex justify-between items-center">
         <span className="font-medium text-white">{props.name}</span>
+        <div className="flex gap-2">
+          {props.onEdit && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                props.onEdit?.();
+              }}
+              className="text-white/50 hover:text-white/90 transition-colors"
+            >
+              <Icon icon={Icons.EDIT} />
+            </button>
+          )}
+          {props.onDelete && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                props.onDelete?.();
+              }}
+              className="text-white/50 hover:text-white/90 transition-colors"
+            >
+              <Icon icon={Icons.X} />
+            </button>
+          )}
+        </div>
         <span
           className={classNames(
             "inline-block px-3 py-1 leading-tight text-sm transition-opacity duration-150 rounded-full bg-pill-activeBackground text-white/85",
@@ -230,46 +251,6 @@ function ThemePreview(props: {
         >
           {t("settings.appearance.activeTheme")}
         </span>
-      </div>
-    </div>
-  );
-}
-
-function ColorOption(props: {
-  active: boolean;
-  colors: Record<string, string>;
-  onClick: () => void;
-  title: string;
-}) {
-  const c1 =
-    props.colors["--colors-type-logo"] ||
-    props.colors["--colors-background-main"] ||
-    props.colors["--colors-type-text"];
-  const c2 =
-    props.colors["--colors-lightBar-light"] ||
-    props.colors["--colors-modal-background"] ||
-    props.colors["--colors-utils-divider"];
-
-  return (
-    <div
-      className={classNames(
-        "cursor-pointer p-1 rounded-full border-2 transition-all",
-        props.active
-          ? "border-type-link scale-110"
-          : "border-transparent hover:border-white/20 hover:scale-105",
-      )}
-      onClick={props.onClick}
-      title={props.title}
-    >
-      <div className="w-8 h-8 rounded-full overflow-hidden flex transform rotate-45">
-        <div
-          className="flex-1 h-full"
-          style={{ backgroundColor: `rgb(${c1})` }}
-        />
-        <div
-          className="flex-1 h-full"
-          style={{ backgroundColor: `rgb(${c2})` }}
-        />
       </div>
     </div>
   );
@@ -309,21 +290,15 @@ export function AppearancePart(props: {
 
   enableLowPerformanceMode: boolean;
 
-  customTheme: {
-    primary: string;
-    secondary: string;
-    tertiary: string;
-  };
-  setCustomTheme: (v: {
-    primary: string;
-    secondary: string;
-    tertiary: string;
-  }) => void;
+  savedCustomThemes: any[];
+  setSavedCustomThemes: (v: any[]) => void;
+  hiddenDefaultThemes: string[];
+  setHiddenDefaultThemes: (v: string[]) => void;
 }) {
   const { t } = useTranslation();
 
-  const customTheme = props.customTheme;
-  const setCustomTheme = props.setCustomTheme;
+  const customThemeModal = useModal("create-custom-theme");
+  const [editingTheme, setEditingTheme] = useState<any>(null);
 
   const carouselRef = useRef<HTMLDivElement>(null);
   const activeThemeRef = useRef<HTMLDivElement>(null);
@@ -710,89 +685,111 @@ export function AppearancePart(props: {
               },
             )}
           >
-            {availableThemes.map((v) => (
+            {availableThemes
+              .filter((v) => !props.hiddenDefaultThemes.includes(v.id))
+              .map((v) => (
+                <div
+                  key={v.id}
+                  ref={props.active === v.id ? activeThemeRef : null}
+                >
+                  <ThemePreview
+                    selector={v.selector}
+                    active={props.active === v.id}
+                    inUse={props.inUse === v.id}
+                    name={t(v.key)}
+                    onClick={() => props.setTheme(v.id)}
+                    onDelete={
+                      v.id !== "default"
+                        ? () => {
+                            props.setHiddenDefaultThemes([
+                              ...props.hiddenDefaultThemes,
+                              v.id,
+                            ]);
+                            if (props.active === v.id) {
+                              props.setTheme("default");
+                            }
+                          }
+                        : undefined
+                    }
+                  />
+                </div>
+              ))}
+            {props.savedCustomThemes.map((v) => (
               <div
                 key={v.id}
                 ref={props.active === v.id ? activeThemeRef : null}
               >
-                <ThemePreview
-                  selector={v.selector}
-                  active={props.active === v.id}
-                  inUse={props.inUse === v.id}
-                  name={t(v.key)}
-                  onClick={() => props.setTheme(v.id)}
-                />
+                <div className={`theme-${v.id}`}>
+                  {/* Need to ensure dynamic class injected from ThemeStore works here too */}
+                  <ThemePreview
+                    selector={`theme-${v.id}`}
+                    active={props.active === v.id}
+                    inUse={props.inUse === v.id}
+                    name={v.name}
+                    onClick={() => props.setTheme(v.id)}
+                    onEdit={() => {
+                      setEditingTheme(v);
+                      customThemeModal.show();
+                    }}
+                    onDelete={() => {
+                      props.setSavedCustomThemes(
+                        props.savedCustomThemes.filter(
+                          (themeItem) => themeItem.id !== v.id,
+                        ),
+                      );
+                      if (props.active === v.id) {
+                        props.setTheme("default");
+                      }
+                    }}
+                  />
+                </div>
               </div>
             ))}
-          </div>
 
-          {props.active === "custom" && (
-            <div className="animate-fade-in space-y-6 pt-4 border-t border-utils-divider">
-              <div>
-                <p className="text-white font-bold mb-3">
-                  {t("settings.appearance.customParts.primary")}
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  {primaryOptions.map((opt) => (
-                    <ColorOption
-                      key={opt.id}
-                      active={customTheme.primary === opt.id}
-                      colors={opt.colors}
-                      onClick={() =>
-                        setCustomTheme({ ...customTheme, primary: opt.id })
-                      }
-                      title={t(`settings.appearance.themes.${opt.id}`)}
-                    />
-                  ))}
-                </div>
-              </div>
-              <div>
-                <p className="text-white font-bold mb-3">
-                  {t("settings.appearance.customParts.secondary")}
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  {secondaryOptions.map((opt) => (
-                    <ColorOption
-                      key={opt.id}
-                      active={customTheme.secondary === opt.id}
-                      colors={opt.colors}
-                      onClick={() =>
-                        setCustomTheme({ ...customTheme, secondary: opt.id })
-                      }
-                      title={t(`settings.appearance.themes.${opt.id}`)}
-                    />
-                  ))}
-                </div>
-              </div>
-              <div>
-                <p className="text-white font-bold mb-3">
-                  {t("settings.appearance.customParts.tertiary")}
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  {tertiaryOptions.map((opt) => (
-                    <ColorOption
-                      key={opt.id}
-                      active={customTheme.tertiary === opt.id}
-                      colors={opt.colors}
-                      onClick={() =>
-                        setCustomTheme({ ...customTheme, tertiary: opt.id })
-                      }
-                      title={t(`settings.appearance.themes.${opt.id}`)}
-                    />
-                  ))}
-                </div>
-              </div>
+            <div
+              className="cursor-pointer group flex flex-col justify-center items-center h-32 relative rounded-lg border border-dashed border-white/20 hover:border-white/50 transition-colors duration-150 p-4 text-center"
+              onClick={() => {
+                setEditingTheme(null);
+                customThemeModal.show();
+              }}
+            >
+              <Icon
+                icon={Icons.PLUS}
+                className="text-4xl text-white/50 group-hover:text-white transition-colors"
+              />
+              <span className="mt-2 font-medium text-white/70 group-hover:text-white transition-colors text-sm sm:text-base leading-tight">
+                {t(
+                  "settings.appearance.themeOptions.createCustom",
+                  "Create Custom Theme",
+                )}
+              </span>
             </div>
-          )}
+          </div>
         </div>
       </div>
 
-      {/* Edit Group Order Modal */}
       <EditGroupOrderModal
         id={editGroupOrderModal.id}
         isShown={editGroupOrderModal.isShown}
         onCancel={handleCancelGroupOrder}
         onSave={handleSaveGroupOrder}
+      />
+
+      <CustomThemeModal
+        id={customThemeModal.id}
+        isShown={customThemeModal.isShown}
+        onHide={customThemeModal.hide}
+        themeToEdit={editingTheme}
+        onSave={(newTheme) => {
+          const existing = props.savedCustomThemes.findIndex(
+            (themeItem) => themeItem.id === newTheme.id,
+          );
+          const copy = [...props.savedCustomThemes];
+          if (existing !== -1) copy[existing] = newTheme;
+          else copy.push(newTheme);
+          props.setSavedCustomThemes(copy);
+          props.setTheme(newTheme.id);
+        }}
       />
     </div>
   );

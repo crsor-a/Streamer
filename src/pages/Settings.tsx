@@ -279,6 +279,8 @@ export function SettingsPage() {
   const setCustomTheme = useThemeStore((s) => s.setCustomTheme);
   const previewTheme = usePreviewThemeStore((s) => s.previewTheme);
   const setPreviewTheme = usePreviewThemeStore((s) => s.setPreviewTheme);
+  const savedCustomThemes = useThemeStore((s) => s.savedCustomThemes);
+  const hiddenDefaultThemes = useThemeStore((s) => s.hiddenDefaultThemes || []);
 
   // Baseline for custom theme so "changed" is detected when only colors change.
   // Only updated on load from backend or after save; prevents useDerived from
@@ -662,8 +664,41 @@ export function SettingsPage() {
           setEnableNumberKeySeeking(settings.enableNumberKeySeeking);
         }
         if (settings.customTheme) {
-          setCustomTheme(settings.customTheme);
-          setCustomThemeBaseline(settings.customTheme);
+          if (
+            settings.customTheme.activeTheme ||
+            settings.customTheme.savedCustomThemes ||
+            settings.customTheme.hiddenDefaultThemes
+          ) {
+            if (settings.customTheme.activeTheme) {
+              setCustomTheme(settings.customTheme.activeTheme);
+              setCustomThemeBaseline(settings.customTheme.activeTheme);
+            }
+            if (settings.customTheme.savedCustomThemes) {
+              useThemeStore.setState({
+                savedCustomThemes: settings.customTheme.savedCustomThemes,
+              });
+            }
+            if (settings.customTheme.hiddenDefaultThemes) {
+              useThemeStore.setState({
+                hiddenDefaultThemes: settings.customTheme.hiddenDefaultThemes,
+              });
+            }
+          } else {
+            setCustomTheme(
+              settings.customTheme as {
+                primary: string;
+                secondary: string;
+                tertiary: string;
+              },
+            );
+            setCustomThemeBaseline(
+              settings.customTheme as {
+                primary: string;
+                secondary: string;
+                tertiary: string;
+              },
+            );
+          }
         } else {
           setCustomThemeBaseline(useThemeStore.getState().customTheme);
         }
@@ -746,6 +781,8 @@ export function SettingsPage() {
     enableAutoResumeOnPlaybackError,
     enablePauseOverlay,
     customThemeBaseline ?? customTheme,
+    savedCustomThemes,
+    hiddenDefaultThemes,
   );
 
   const availableSources = useMemo(() => {
@@ -848,7 +885,11 @@ export function SettingsPage() {
           enableAutoResumeOnPlaybackError:
             state.enableAutoResumeOnPlaybackError.state,
           enablePauseOverlay: state.enablePauseOverlay.state,
-          customTheme: state.customTheme.state,
+          customTheme: {
+            activeTheme: state.customTheme.state,
+            savedCustomThemes: state.savedCustomThemes.state,
+            hiddenDefaultThemes: state.hiddenDefaultThemes.state,
+          },
         });
       }
       if (state.deviceName.changed) {
@@ -911,6 +952,10 @@ export function SettingsPage() {
     setEnablePauseOverlay(state.enablePauseOverlay.state);
     setCustomTheme(state.customTheme.state);
     setCustomThemeBaseline(state.customTheme.state);
+    useThemeStore.setState({
+      savedCustomThemes: state.savedCustomThemes.state,
+      hiddenDefaultThemes: state.hiddenDefaultThemes.state,
+    });
 
     if (state.profile.state) {
       updateProfile(state.profile.state);
@@ -1091,8 +1136,10 @@ export function SettingsPage() {
               enableLowPerformanceMode={state.enableLowPerformanceMode.state}
               enablePauseOverlay={state.enablePauseOverlay.state}
               setEnablePauseOverlay={state.enablePauseOverlay.set}
-              customTheme={state.customTheme.state}
-              setCustomTheme={state.customTheme.set}
+              savedCustomThemes={state.savedCustomThemes.state}
+              setSavedCustomThemes={state.savedCustomThemes.set}
+              hiddenDefaultThemes={state.hiddenDefaultThemes.state}
+              setHiddenDefaultThemes={state.hiddenDefaultThemes.set}
             />
           </div>
         )}

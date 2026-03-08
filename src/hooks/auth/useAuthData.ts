@@ -35,6 +35,9 @@ export function useAuthData() {
   const importSubtitleLanguage = useSubtitleStore(
     (s) => s.importSubtitleLanguage,
   );
+  const setCustomTheme = useThemeStore((s) => s.setCustomTheme);
+  const saveCustomTheme = useThemeStore((s) => s.saveCustomTheme);
+  const hideDefaultTheme = useThemeStore((s) => s.hideDefaultTheme);
   const setFebboxKey = usePreferencesStore((s) => s.setFebboxKey);
   const setdebridToken = usePreferencesStore((s) => s.setdebridToken);
   const setdebridService = usePreferencesStore((s) => s.setdebridService);
@@ -172,6 +175,34 @@ export function useAuthData() {
         setTheme(settings.applicationTheme);
       }
 
+      if (settings.customTheme) {
+        if (settings.customTheme.activeTheme) {
+          setCustomTheme(settings.customTheme.activeTheme);
+        } else if (
+          settings.customTheme.primary &&
+          settings.customTheme.secondary &&
+          settings.customTheme.tertiary
+        ) {
+          // Fallback for older theme format
+          setCustomTheme({
+            primary: settings.customTheme.primary,
+            secondary: settings.customTheme.secondary,
+            tertiary: settings.customTheme.tertiary,
+          });
+        }
+
+        if (settings.customTheme.savedCustomThemes) {
+          settings.customTheme.savedCustomThemes.forEach((t: any) =>
+            saveCustomTheme(t),
+          );
+        }
+        if (settings.customTheme.hiddenDefaultThemes) {
+          settings.customTheme.hiddenDefaultThemes.forEach((t: any) =>
+            hideDefaultTheme(t),
+          );
+        }
+      }
+
       if (settings.proxyUrls) {
         setProxySet(settings.proxyUrls);
       }
@@ -303,6 +334,9 @@ export function useAuthData() {
       setAppLanguage,
       importSubtitleLanguage,
       setTheme,
+      setCustomTheme,
+      saveCustomTheme,
+      hideDefaultTheme,
       setProxySet,
       setEnableThumbnails,
       setEnableAutoplay,

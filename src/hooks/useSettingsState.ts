@@ -87,6 +87,14 @@ export function useSettingsState(
     secondary: string;
     tertiary: string;
   },
+  savedCustomThemes: {
+    id: string;
+    name: string;
+    primary: string;
+    secondary: string;
+    tertiary: string;
+  }[],
+  hiddenDefaultThemes: string[],
 ) {
   const [proxyUrlsState, setProxyUrls, resetProxyUrls, proxyUrlsChanged] =
     useDerived(proxyUrls);
@@ -290,7 +298,30 @@ export function useSettingsState(
     resetCustomTheme,
     customThemeChanged,
   ] = useDerived(customTheme);
+  const [
+    savedCustomThemesState,
+    setSavedCustomThemesState,
+    resetSavedCustomThemes,
+    savedCustomThemesChanged,
+  ] = useDerived(savedCustomThemes);
+  const [
+    hiddenDefaultThemesState,
+    setHiddenDefaultThemesState,
+    resetHiddenDefaultThemes,
+    hiddenDefaultThemesChanged,
+  ] = useDerived(hiddenDefaultThemes);
+
   const setCustomThemeStore = useThemeStore((s) => s.setCustomTheme);
+  const setSavedCustomThemeStore = useThemeStore((_s) => {
+    // Need a function to bulk set, since we only have saveCustomTheme and deleteCustomTheme
+    return (themes: any[]) =>
+      useThemeStore.setState({ savedCustomThemes: themes });
+  });
+
+  const setHiddenDefaultThemesStore = useThemeStore((_s) => {
+    return (themes: string[]) =>
+      useThemeStore.setState({ hiddenDefaultThemes: themes });
+  });
 
   function reset() {
     resetTheme();
@@ -332,6 +363,8 @@ export function useSettingsState(
     resetEnableAutoResumeOnPlaybackError();
     resetEnablePauseOverlay();
     resetCustomTheme();
+    resetSavedCustomThemes();
+    resetHiddenDefaultThemes();
   }
 
   const changed =
@@ -373,7 +406,9 @@ export function useSettingsState(
     enableDoubleClickToSeekChanged ||
     enableAutoResumeOnPlaybackErrorChanged ||
     enablePauseOverlayChanged ||
-    customThemeChanged;
+    customThemeChanged ||
+    savedCustomThemesChanged ||
+    hiddenDefaultThemesChanged;
 
   return {
     reset,
@@ -575,6 +610,22 @@ export function useSettingsState(
         setCustomThemeStore(v);
       },
       changed: customThemeChanged,
+    },
+    savedCustomThemes: {
+      state: savedCustomThemesState,
+      set: (v: any[]) => {
+        setSavedCustomThemesState(v);
+        setSavedCustomThemeStore(v);
+      },
+      changed: savedCustomThemesChanged,
+    },
+    hiddenDefaultThemes: {
+      state: hiddenDefaultThemesState,
+      set: (v: string[]) => {
+        setHiddenDefaultThemesState(v);
+        setHiddenDefaultThemesStore(v);
+      },
+      changed: hiddenDefaultThemesChanged,
     },
   };
 }
