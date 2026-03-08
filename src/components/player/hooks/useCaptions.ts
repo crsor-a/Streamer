@@ -80,6 +80,8 @@ export function useCaptions() {
 
   const selectCaptionById = useCallback(
     async (captionId: string) => {
+      if (selectedCaption?.id === captionId) return;
+
       const caption = captions.find((v) => v.id === captionId);
       if (!caption) return;
 
@@ -123,7 +125,13 @@ export function useCaptions() {
 
       setDirectCaption(captionToSet, caption);
     },
-    [captions, getSubtitleTracks, setSubtitlePreference, setDirectCaption],
+    [
+      captions,
+      getSubtitleTracks,
+      setSubtitlePreference,
+      setDirectCaption,
+      selectedCaption,
+    ],
   );
 
   const selectLanguage = useCallback(
