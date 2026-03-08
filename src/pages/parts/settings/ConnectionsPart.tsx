@@ -487,9 +487,6 @@ export function FebboxSetup({
                     className="flex-grow"
                   />
                 </div>
-                <div className="flex items-center">
-                  <RegionSelectorPart />
-                </div>
               </div>
               {status === "error" && (
                 <p className="text-type-danger mt-4">

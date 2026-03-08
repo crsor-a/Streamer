@@ -66,11 +66,9 @@ export async function fetchFebboxQuota(febboxKey: string | null): Promise<any> {
 
   console.log("SetupPart.tsx: Fetching Febbox quota");
   try {
-    const response = await fetch("https://fed-api.pstream.mov/quota", {
-      headers: {
-        "ui-token": febboxKey,
-      },
-    });
+    const response = await fetch(
+      `https://backend.xprime.tv/fedapi/quota?ui=${febboxKey}`,
+    );
 
     if (!response.ok) {
       console.error("Febbox quota API failed with status:", response.status);
@@ -87,88 +85,29 @@ export async function fetchFebboxQuota(febboxKey: string | null): Promise<any> {
 }
 
 export async function testFebboxKey(febboxKey: string | null): Promise<Status> {
-  const febboxApiTestUrl = `https://fed-api.pstream.mov/movie/tt0325980`;
-
   if (!febboxKey) {
     return "unset";
   }
 
-  let attempts = 0;
-  const maxAttempts = 2;
-
-  while (attempts < maxAttempts) {
-    console.log(
-      `Attempt ${attempts + 1} of ${maxAttempts} to check Febbox token`,
+  try {
+    const response = await fetch(
+      `https://backend.xprime.tv/fedapi/quota?ui=${febboxKey}`,
     );
-    try {
-      const response = await fetch(febboxApiTestUrl, {
-        headers: {
-          "ui-token": febboxKey,
-        },
-      });
 
-      if (!response.ok) {
-        console.error("Febbox API test failed with status:", response.status);
-        if (response.status === 503 || response.status === 502) {
-          return "api_down";
-        }
-        attempts += 1;
-        if (attempts === maxAttempts) {
-          console.log("Max attempts reached, returning error");
-          return "invalid_token";
-        }
-        console.log("Retrying after failed response...");
-        await sleep(3000);
-        continue;
-      }
-
-      const data = (await response.json()) as any;
-      if (!data || !data.streams) {
-        console.error("Invalid response format from Febbox API:", data);
-        attempts += 1;
-        if (attempts === maxAttempts) {
-          console.log("Max attempts reached, returning error");
-          return "invalid_token";
-        }
-        console.log("Retrying after invalid response format...");
-        await sleep(3000);
-        continue;
-      }
-
-      const isVIPLink = Object.values(data.streams).some((stream: any) => {
-        if (typeof stream === "object" && stream.download) {
-          return stream.download.includes("/vip/");
-        }
-        return false;
-      });
-
-      if (isVIPLink) {
-        console.log("VIP link found, returning success");
-        return "success";
-      }
-
-      console.log("No VIP link found in attempt", attempts + 1);
-      attempts += 1;
-      if (attempts === maxAttempts) {
-        console.log("Max attempts reached, returning error");
-        return "invalid_token";
-      }
-      console.log("Retrying after no VIP link found...");
-      await sleep(3000);
-    } catch (error: any) {
-      console.error("Error testing Febbox token:", error);
-      attempts += 1;
-      if (attempts === maxAttempts) {
-        console.log("Max attempts reached, returning error");
+    if (!response.ok) {
+      if (response.status === 503 || response.status === 502) {
         return "api_down";
       }
-      console.log("Retrying after error...");
-      await sleep(3000);
+      return "invalid_token";
     }
-  }
 
-  console.log("All attempts exhausted, returning error");
-  return "api_down";
+    const data = (await response.json()) as any;
+    if (data?.error) return "invalid_token";
+
+    return "success";
+  } catch {
+    return "api_down";
+  }
 }
 
 export async function testdebridToken(
