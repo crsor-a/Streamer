@@ -8,7 +8,7 @@ import {
 } from "react";
 
 import { SubtitleStyling } from "@/stores/subtitles";
-import { usePreviewThemeStore } from "@/stores/theme";
+import { SavedCustomTheme, usePreviewThemeStore } from "@/stores/theme";
 
 export function useDerived<T>(
   initial: T,
@@ -87,13 +87,7 @@ export function useSettingsState(
     secondary: string;
     tertiary: string;
   },
-  savedCustomThemes: {
-    id: string;
-    name: string;
-    primary: string;
-    secondary: string;
-    tertiary: string;
-  }[],
+  savedCustomThemes: SavedCustomTheme[],
   hiddenDefaultThemes: string[],
 ) {
   const [proxyUrlsState, setProxyUrls, resetProxyUrls, proxyUrlsChanged] =
@@ -604,7 +598,7 @@ export function useSettingsState(
     },
     savedCustomThemes: {
       state: savedCustomThemesState,
-      set: (v: any[]) => {
+      set: (v: SavedCustomTheme[]) => {
         setSavedCustomThemesState(v);
         setPreviewSavedCustomThemes(v);
       },

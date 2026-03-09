@@ -179,7 +179,10 @@ export function CustomThemeModal(props: {
               id="theme-name-input"
               name="theme-name"
               className="w-full text-3xl md:text-4xl lg:text-5xl font-black bg-transparent border-none outline-none text-white placeholder-white/20 transition-colors min-w-0"
-              placeholder="Name your theme..."
+              placeholder={t(
+                "settings.appearance.customTheme.namePlaceholder",
+                "Name your theme...",
+              )}
               value={name}
               onChange={(e) => setName(e.target.value)}
               autoFocus
@@ -208,7 +211,7 @@ export function CustomThemeModal(props: {
           <div className="space-y-6">
             <div>
               <h2 className="text-2xl font-bold tracking-tight">
-                Primary Color
+                {t("settings.appearance.customParts.primary", "Primary")} Color
               </h2>
             </div>
             <div className="flex flex-wrap gap-4">
@@ -227,7 +230,8 @@ export function CustomThemeModal(props: {
           <div className="space-y-6">
             <div>
               <h2 className="text-2xl font-bold tracking-tight">
-                Secondary Color
+                {t("settings.appearance.customParts.secondary", "Secondary")}{" "}
+                Color
               </h2>
             </div>
             <div className="flex flex-wrap gap-4">
@@ -247,7 +251,8 @@ export function CustomThemeModal(props: {
           <div className="space-y-6">
             <div>
               <h2 className="text-2xl font-bold tracking-tight">
-                Tertiary Color
+                {t("settings.appearance.customParts.tertiary", "Tertiary")}{" "}
+                Color
               </h2>
             </div>
             <div className="flex flex-wrap gap-4">
