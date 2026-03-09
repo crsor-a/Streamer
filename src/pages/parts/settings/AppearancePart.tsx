@@ -540,9 +540,6 @@ export function AppearancePart(props: {
             <p className="text-white font-bold mb-3">
               {t("settings.appearance.options.pauseOverlay")}
             </p>
-            <p className="max-w-[25rem] font-medium">
-              {t("settings.appearance.options.pauseOverlayDescription")}
-            </p>
             <div
               onClick={() =>
                 !props.enableLowPerformanceMode &&
