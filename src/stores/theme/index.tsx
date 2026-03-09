@@ -100,15 +100,23 @@ export const useThemeStore = create(
 
 export interface PreviewThemeStore {
   previewTheme: string | null;
+  previewSavedCustomThemes: SavedCustomTheme[] | null;
   setPreviewTheme(v: string | null): void;
+  setPreviewSavedCustomThemes(v: SavedCustomTheme[] | null): void;
 }
 
 export const usePreviewThemeStore = create(
   immer<PreviewThemeStore>((set) => ({
     previewTheme: null,
+    previewSavedCustomThemes: null,
     setPreviewTheme(v) {
       set((s) => {
         s.previewTheme = v;
+      });
+    },
+    setPreviewSavedCustomThemes(v) {
+      set((s) => {
+        s.previewSavedCustomThemes = v;
       });
     },
   })),
@@ -119,10 +127,14 @@ export function ThemeProvider(props: {
   applyGlobal?: boolean;
 }) {
   const previewTheme = usePreviewThemeStore((s) => s.previewTheme);
+  const previewSavedCustomThemes = usePreviewThemeStore(
+    (s) => s.previewSavedCustomThemes,
+  );
   const theme = useThemeStore((s) => s.theme);
   const customTheme = useThemeStore((s) => s.customTheme);
 
-  const savedCustomThemes = useThemeStore((s) => s.savedCustomThemes);
+  const savedCustomThemesStore = useThemeStore((s) => s.savedCustomThemes);
+  const savedCustomThemes = previewSavedCustomThemes ?? savedCustomThemesStore;
 
   const themeToDisplay = previewTheme ?? theme;
   const themeSelector = themeToDisplay ? `theme-${themeToDisplay}` : undefined;

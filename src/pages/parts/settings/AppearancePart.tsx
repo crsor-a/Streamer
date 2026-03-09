@@ -765,6 +765,23 @@ export function AppearancePart(props: {
               </span>
             </div>
           </div>
+          <div className="flex justify-end mt-4">
+            <Button
+              theme="secondary"
+              onClick={() => {
+                props.setHiddenDefaultThemes([]);
+                props.setSavedCustomThemes([]);
+                props.setTheme("default");
+              }}
+              className="flex items-center gap-2"
+            >
+              <Icon icon={Icons.ARROW_LEFT} />
+              {t(
+                "settings.appearance.themeOptions.resetToDefault",
+                "Reset to Default",
+              )}
+            </Button>
+          </div>
         </div>
       </div>
 

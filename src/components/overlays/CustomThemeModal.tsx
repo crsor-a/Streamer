@@ -257,8 +257,8 @@ export function CustomThemeModal(props: {
                   opt={opt}
                   selected={tertiary === opt.id}
                   onClick={() => setTertiary(opt.id)}
-                  colorKey1="--colors-background-main"
-                  colorKey2="--colors-modal-background"
+                  colorKey1="--colors-themePreview-primary"
+                  colorKey2="--colors-themePreview-secondary"
                 />
               ))}
             </div>

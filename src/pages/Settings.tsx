@@ -279,6 +279,9 @@ export function SettingsPage() {
   const setCustomTheme = useThemeStore((s) => s.setCustomTheme);
   const previewTheme = usePreviewThemeStore((s) => s.previewTheme);
   const setPreviewTheme = usePreviewThemeStore((s) => s.setPreviewTheme);
+  const setPreviewSavedCustomThemes = usePreviewThemeStore(
+    (s) => s.setPreviewSavedCustomThemes,
+  );
   const savedCustomThemes = useThemeStore((s) => s.savedCustomThemes);
   const hiddenDefaultThemes = useThemeStore((s) => s.hiddenDefaultThemes || []);
 
@@ -809,8 +812,9 @@ export function SettingsPage() {
     // Clear preview theme on unmount
     return () => {
       setPreviewTheme(null);
+      setPreviewSavedCustomThemes(null);
     };
-  }, [setPreviewTheme]);
+  }, [setPreviewTheme, setPreviewSavedCustomThemes]);
 
   const setThemeWithPreview = useCallback(
     (theme: string) => {
