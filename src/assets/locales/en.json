@@ -1260,8 +1260,12 @@
         "forceCompactEpisodeViewLabel": "Compact episodes",
         "homeSectionOrderGroups": "Reorder bookmark groups",
         "pauseOverlay": "Pause overlay",
-        "pauseOverlayDescription": "Show a title/logo and description overlay when the player is paused and idle.",
-        "pauseOverlayLabel": "Pause overlay"
+        "pauseOverlayLabel": "Pause overlay",
+        "themeOptions": {
+          "createCustom": "Create Custom Theme",
+          "themeLimitReached": "Theme limit reached (30 max)",
+          "resetToDefault": "Reset to Default"
+        }
       },
       "sections": {
         "watching": "Currently Watching",
