@@ -179,7 +179,10 @@ export function CustomThemeModal(props: {
               id="theme-name-input"
               name="theme-name"
               className="w-full text-3xl md:text-4xl lg:text-5xl font-black bg-transparent border-none outline-none text-white placeholder-white/20 transition-colors min-w-0"
-              placeholder={t("settings.appearance.customTheme.namePlaceholder", "Name your theme...")}
+              placeholder={t(
+                "settings.appearance.customTheme.namePlaceholder",
+                "Name your theme...",
+              )}
               value={name}
               onChange={(e) => setName(e.target.value)}
               autoFocus
@@ -227,7 +230,8 @@ export function CustomThemeModal(props: {
           <div className="space-y-6">
             <div>
               <h2 className="text-2xl font-bold tracking-tight">
-                {t("settings.appearance.customParts.secondary", "Secondary")} Color
+                {t("settings.appearance.customParts.secondary", "Secondary")}{" "}
+                Color
               </h2>
             </div>
             <div className="flex flex-wrap gap-4">
@@ -247,7 +251,8 @@ export function CustomThemeModal(props: {
           <div className="space-y-6">
             <div>
               <h2 className="text-2xl font-bold tracking-tight">
-                {t("settings.appearance.customParts.tertiary", "Tertiary")} Color
+                {t("settings.appearance.customParts.tertiary", "Tertiary")}{" "}
+                Color
               </h2>
             </div>
             <div className="flex flex-wrap gap-4">
@@ -257,8 +262,8 @@ export function CustomThemeModal(props: {
                   opt={opt}
                   selected={tertiary === opt.id}
                   onClick={() => setTertiary(opt.id)}
-                  colorKey1="--colors-background-main"
-                  colorKey2="--colors-modal-background"
+                  colorKey1="--colors-themePreview-primary"
+                  colorKey2="--colors-themePreview-secondary"
                 />
               ))}
             </div>

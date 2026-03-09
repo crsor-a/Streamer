@@ -748,23 +748,68 @@ export function AppearancePart(props: {
             ))}
 
             <div
-              className="cursor-pointer group flex flex-col justify-center items-center h-32 relative rounded-lg border border-dashed border-white/20 hover:border-white/50 transition-colors duration-150 p-4 text-center"
+              className={classNames(
+                "group flex flex-col justify-center items-center h-32 relative rounded-lg border border-dashed transition-colors duration-150 p-4 text-center",
+                props.savedCustomThemes.length >= 30
+                  ? "border-opacity-10 border-white/20 opacity-50 cursor-not-allowed"
+                  : "cursor-pointer border-white/20 hover:border-white/50",
+              )}
               onClick={() => {
+                if (props.savedCustomThemes.length >= 30) return;
                 setEditingTheme(null);
                 customThemeModal.show();
               }}
             >
               <Icon
                 icon={Icons.PLUS}
-                className="text-4xl text-white/50 group-hover:text-white transition-colors"
-              />
-              <span className="mt-2 font-medium text-white/70 group-hover:text-white transition-colors text-sm sm:text-base leading-tight">
-                {t(
-                  "settings.appearance.themeOptions.createCustom",
-                  "Create Custom Theme",
+                className={classNames(
+                  "text-4xl transition-colors",
+                  props.savedCustomThemes.length >= 30
+                    ? "text-white/20"
+                    : "text-white/50 group-hover:text-white",
                 )}
-              </span>
+              />
+              <div className="flex flex-col items-center mt-2">
+                <span
+                  className={classNames(
+                    "font-medium transition-colors text-sm sm:text-base leading-tight",
+                    props.savedCustomThemes.length >= 30
+                      ? "text-white/50"
+                      : "text-white/70 group-hover:text-white",
+                  )}
+                >
+                  {t(
+                    "settings.appearance.themeOptions.createCustom",
+                    "Create Custom Theme",
+                  )}
+                </span>
+                {props.savedCustomThemes.length >= 30 && (
+                  <span className="text-xs text-semantic-rose-c100 font-bold mt-1">
+                    {t(
+                      "settings.appearance.themeOptions.themeLimitReached",
+                      "Theme limit reached (30 max)",
+                    )}
+                  </span>
+                )}
+              </div>
             </div>
+          </div>
+          <div className="flex justify-end mt-4">
+            <Button
+              theme="secondary"
+              onClick={() => {
+                props.setHiddenDefaultThemes([]);
+                props.setSavedCustomThemes([]);
+                props.setTheme("default");
+              }}
+              className="flex items-center gap-2"
+            >
+              <Icon icon={Icons.ARROW_LEFT} />
+              {t(
+                "settings.appearance.themeOptions.resetToDefault",
+                "Reset to Default",
+              )}
+            </Button>
           </div>
         </div>
       </div>

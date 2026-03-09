@@ -8,7 +8,7 @@ import {
 } from "react";
 
 import { SubtitleStyling } from "@/stores/subtitles";
-import { SavedCustomTheme, usePreviewThemeStore, useThemeStore } from "@/stores/theme";
+import { SavedCustomTheme, usePreviewThemeStore } from "@/stores/theme";
 
 export function useDerived<T>(
   initial: T,
@@ -87,13 +87,7 @@ export function useSettingsState(
     secondary: string;
     tertiary: string;
   },
-  savedCustomThemes: {
-    id: string;
-    name: string;
-    primary: string;
-    secondary: string;
-    tertiary: string;
-  }[],
+  savedCustomThemes: SavedCustomTheme[],
   hiddenDefaultThemes: string[],
 ) {
   const [proxyUrlsState, setProxyUrls, resetProxyUrls, proxyUrlsChanged] =
@@ -118,10 +112,13 @@ export function useSettingsState(
     useDerived(tidbKey);
   const [themeState, setTheme, resetTheme, themeChanged] = useDerived(theme);
   const setPreviewTheme = usePreviewThemeStore((s) => s.setPreviewTheme);
-  const resetPreviewTheme = useCallback(
-    () => setPreviewTheme(theme),
-    [setPreviewTheme, theme],
+  const setPreviewSavedCustomThemes = usePreviewThemeStore(
+    (s) => s.setPreviewSavedCustomThemes,
   );
+  const resetPreviewTheme = useCallback(() => {
+    setPreviewTheme(theme);
+    setPreviewSavedCustomThemes(null);
+  }, [setPreviewTheme, setPreviewSavedCustomThemes, theme]);
   const [
     appLanguageState,
     setAppLanguage,
@@ -311,12 +308,8 @@ export function useSettingsState(
     hiddenDefaultThemesChanged,
   ] = useDerived(hiddenDefaultThemes);
 
-  const setCustomThemeStore = useThemeStore((s) => s.setCustomTheme);
-  const setSavedCustomThemeStore = (themes: SavedCustomTheme[]) =>
-    useThemeStore.setState({ savedCustomThemes: themes });
-
-  const setHiddenDefaultThemesStore = (themes: string[]) =>
-    useThemeStore.setState({ hiddenDefaultThemes: themes });
+  // We don't overwrite the store immediately anymore, use PreviewThemeStore instead.
+  // The actual store updates happen in Settings.tsx on save.
 
   function reset() {
     resetTheme();
@@ -600,26 +593,20 @@ export function useSettingsState(
     },
     customTheme: {
       state: customThemeState,
-      set: (v: { primary: string; secondary: string; tertiary: string }) => {
-        setCustomThemeState(v);
-        setCustomThemeStore(v);
-      },
+      set: setCustomThemeState,
       changed: customThemeChanged,
     },
     savedCustomThemes: {
       state: savedCustomThemesState,
-      set: (v: any[]) => {
+      set: (v: SavedCustomTheme[]) => {
         setSavedCustomThemesState(v);
-        setSavedCustomThemeStore(v);
+        setPreviewSavedCustomThemes(v);
       },
       changed: savedCustomThemesChanged,
     },
     hiddenDefaultThemes: {
       state: hiddenDefaultThemesState,
-      set: (v: string[]) => {
-        setHiddenDefaultThemesState(v);
-        setHiddenDefaultThemesStore(v);
-      },
+      set: setHiddenDefaultThemesState,
       changed: hiddenDefaultThemesChanged,
     },
   };
