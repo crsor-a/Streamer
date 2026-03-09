@@ -159,7 +159,8 @@ export function ThemeProvider(props: {
       .map(([k, v]) => `${k}: ${v};`)
       .join(" ");
 
-    styleContent += `.theme-${savedTheme.id} { ${cssVars} }\n`;
+    const safeId = savedTheme.id.replace(/[^a-zA-Z0-9-]/g, '');
+    styleContent += `.theme-${safeId} { ${cssVars} }\n`;
   });
 
   return (

@@ -14,6 +14,7 @@ import { useBackendUrl } from "@/hooks/auth/useBackendUrl";
 import { useAuthStore } from "@/stores/auth";
 import { useBookmarkStore } from "@/stores/bookmarks";
 import { useGroupOrderStore } from "@/stores/groupOrder";
+import { SavedCustomTheme } from "@/stores/theme";
 
 const availableThemes = [
   {
@@ -290,8 +291,8 @@ export function AppearancePart(props: {
 
   enableLowPerformanceMode: boolean;
 
-  savedCustomThemes: any[];
-  setSavedCustomThemes: (v: any[]) => void;
+  savedCustomThemes: SavedCustomTheme[];
+  setSavedCustomThemes: (v: SavedCustomTheme[]) => void;
   hiddenDefaultThemes: string[];
   setHiddenDefaultThemes: (v: string[]) => void;
 }) {

@@ -8,7 +8,7 @@ import {
 } from "react";
 
 import { SubtitleStyling } from "@/stores/subtitles";
-import { usePreviewThemeStore, useThemeStore } from "@/stores/theme";
+import { SavedCustomTheme, usePreviewThemeStore, useThemeStore } from "@/stores/theme";
 
 export function useDerived<T>(
   initial: T,
@@ -312,16 +312,11 @@ export function useSettingsState(
   ] = useDerived(hiddenDefaultThemes);
 
   const setCustomThemeStore = useThemeStore((s) => s.setCustomTheme);
-  const setSavedCustomThemeStore = useThemeStore((_s) => {
-    // Need a function to bulk set, since we only have saveCustomTheme and deleteCustomTheme
-    return (themes: any[]) =>
-      useThemeStore.setState({ savedCustomThemes: themes });
-  });
+  const setSavedCustomThemeStore = (themes: SavedCustomTheme[]) =>
+    useThemeStore.setState({ savedCustomThemes: themes });
 
-  const setHiddenDefaultThemesStore = useThemeStore((_s) => {
-    return (themes: string[]) =>
-      useThemeStore.setState({ hiddenDefaultThemes: themes });
-  });
+  const setHiddenDefaultThemesStore = (themes: string[]) =>
+    useThemeStore.setState({ hiddenDefaultThemes: themes });
 
   function reset() {
     resetTheme();
