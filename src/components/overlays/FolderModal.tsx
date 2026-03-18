@@ -6,7 +6,7 @@ import { MediaGrid } from "@/components/media/MediaGrid";
 import { WatchedMediaCard } from "@/components/media/WatchedMediaCard";
 import { OverlayPortal } from "@/components/overlays/OverlayDisplay";
 import { useBookmarkStore } from "@/stores/bookmarks";
-import { parseGroupString } from "@/utils/groups";
+import { parseGroupString } from "@/utils/bookmarkModifications";
 import { MediaItem } from "@/utils/mediaTypes";
 
 export interface FolderModalProps {

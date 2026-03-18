@@ -228,6 +228,9 @@ export function CustomThemeModal(props: {
       primary,
       secondary,
       tertiary,
+      ...(useCustomPrimary && { customPrimaryHex: customPrimaryColor }),
+      ...(useCustomSecondary && { customSecondaryHex: customSecondaryColor }),
+      ...(useCustomTertiary && { customTertiaryHex: customTertiaryColor }),
     };
 
     if (props.onSave) {
@@ -268,7 +271,7 @@ export function CustomThemeModal(props: {
               id="theme-name-input"
               name="theme-name"
               className="w-full text-2xl md:text-3xl font-black bg-transparent border-none outline-none text-white placeholder-white/20 transition-colors min-w-0"
-              placeholder="Name your theme..."
+              placeholder={t("settings.appearance.customTheme.namePlaceholder")}
               value={name}
               onChange={(e) => setName(e.target.value)}
               autoFocus
@@ -277,7 +280,7 @@ export function CustomThemeModal(props: {
 
           {/* Live Preview */}
           <div className="flex-1 flex flex-col justify-center py-4">
-            <p className="text-white/40 text-xs uppercase tracking-widest mb-3 font-semibold">Live Preview</p>
+            <p className="text-white/40 text-xs uppercase tracking-widest mb-3 font-semibold">{t("settings.appearance.customTheme.livePreview")}</p>
             <LivePreview />
           </div>
 
@@ -303,7 +306,7 @@ export function CustomThemeModal(props: {
           {/* Primary */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold tracking-tight">Primary Color</h2>
+              <h2 className="text-xl font-bold tracking-tight">{t("settings.appearance.customTheme.primaryColor")}</h2>
               <button
                 type="button"
                 onClick={() => setUseCustomPrimary(!useCustomPrimary)}
@@ -315,12 +318,12 @@ export function CustomThemeModal(props: {
                 )}
               >
                 <Icon icon={Icons.BRUSH} className="mr-1" />
-                Custom
+                {t("settings.appearance.customTheme.customToggle")}
               </button>
             </div>
             {useCustomPrimary ? (
               <CustomColorPicker
-                label="Primary accent color"
+                label={t("settings.appearance.customTheme.primaryColorLabel")}
                 value={customPrimaryColor}
                 onChange={setCustomPrimaryColor}
               />
@@ -342,7 +345,7 @@ export function CustomThemeModal(props: {
           {/* Secondary */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold tracking-tight">Secondary Color</h2>
+              <h2 className="text-xl font-bold tracking-tight">{t("settings.appearance.customTheme.secondaryColor")}</h2>
               <button
                 type="button"
                 onClick={() => setUseCustomSecondary(!useCustomSecondary)}
@@ -354,12 +357,12 @@ export function CustomThemeModal(props: {
                 )}
               >
                 <Icon icon={Icons.BRUSH} className="mr-1" />
-                Custom
+                {t("settings.appearance.customTheme.customToggle")}
               </button>
             </div>
             {useCustomSecondary ? (
               <CustomColorPicker
-                label="Secondary text color"
+                label={t("settings.appearance.customTheme.secondaryColorLabel")}
                 value={customSecondaryColor}
                 onChange={setCustomSecondaryColor}
               />
@@ -382,7 +385,7 @@ export function CustomThemeModal(props: {
           {/* Tertiary */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold tracking-tight">Tertiary Color</h2>
+              <h2 className="text-xl font-bold tracking-tight">{t("settings.appearance.customTheme.tertiaryColor")}</h2>
               <button
                 type="button"
                 onClick={() => setUseCustomTertiary(!useCustomTertiary)}
@@ -394,12 +397,12 @@ export function CustomThemeModal(props: {
                 )}
               >
                 <Icon icon={Icons.BRUSH} className="mr-1" />
-                Custom
+                {t("settings.appearance.customTheme.customToggle")}
               </button>
             </div>
             {useCustomTertiary ? (
               <CustomColorPicker
-                label="Background color"
+                label={t("settings.appearance.customTheme.tertiaryColorLabel")}
                 value={customTertiaryColor}
                 onChange={setCustomTertiaryColor}
               />

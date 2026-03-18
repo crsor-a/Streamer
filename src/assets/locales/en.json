@@ -1246,6 +1246,20 @@
         "secondary": "Secondary",
         "tertiary": "Tertiary"
       },
+      "customTheme": {
+        "editBtn": "Edit",
+        "createBtn": "Create",
+        "createBtn2": "Your Own Theme",
+        "namePlaceholder": "Name your theme...",
+        "livePreview": "Live Preview",
+        "customToggle": "Custom",
+        "primaryColor": "Primary Color",
+        "secondaryColor": "Secondary Color",
+        "tertiaryColor": "Tertiary Color",
+        "primaryColorLabel": "Primary accent color",
+        "secondaryColorLabel": "Secondary text color",
+        "tertiaryColorLabel": "Background color"
+      },
       "title": "Appearance",
       "options": {
         "discover": "Discover section",

@@ -407,7 +407,6 @@ export function MediaCard(props: MediaCardProps) {
   const currentGroups = bookmarks[media.id]?.group || [];
 
   const allGroups = useMemo(() => {
-    if (!contextMenuPos) return [];
     const groupSet = new Set<string>();
     Object.values(bookmarks).forEach((bookmark) => {
       if (bookmark.group) {
@@ -415,7 +414,7 @@ export function MediaCard(props: MediaCardProps) {
       }
     });
     return Array.from(groupSet);
-  }, [contextMenuPos, bookmarks]);
+  }, [bookmarks]);
 
   const meta: PlayerMeta | undefined = useMemo(() => {
     return media.year !== undefined
@@ -442,7 +441,6 @@ export function MediaCard(props: MediaCardProps) {
     } else if (meta) {
       addBookmarkWithGroups(meta, newGroups);
     }
-    setContextMenuPos(null);
   };
 
   const handleCreateFolder = (e: React.FormEvent) => {
@@ -482,6 +480,117 @@ export function MediaCard(props: MediaCardProps) {
     />
   );
 
+  const contextMenuEl = contextMenuPos && (
+    <ContextMenu
+      x={contextMenuPos.x}
+      y={contextMenuPos.y}
+      onClose={() => setContextMenuPos(null)}
+    >
+      <div className="px-3 py-1 mb-1 text-xs text-white/50 font-bold uppercase tracking-wider">
+        {media.title || "Media"}
+      </div>
+      <ContextMenuDivider />
+      <ContextMenuItem onClick={handleShowDetails}>
+        <Icon icon={Icons.CIRCLE_EXCLAMATION} className="text-lg w-5" />
+        <span className="flex-1">{t("bookmarks.folders.moreInfo")}</span>
+      </ContextMenuItem>
+      {props.onEdit && (
+        <ContextMenuItem
+          onClick={() => {
+            setContextMenuPos(null);
+            props.onEdit?.();
+          }}
+        >
+          <Icon icon={Icons.EDIT} className="text-lg w-5" />
+          <span className="flex-1">
+            {t("bookmarks.folders.editDetails")}
+          </span>
+        </ContextMenuItem>
+      )}
+      <ContextMenuDivider />
+
+      <div className="px-3 py-2 text-xs text-white/50 font-bold uppercase tracking-wider flex justify-between items-center">
+        <span>{t("bookmarks.folders.title")}</span>
+        <span
+          className={
+            allGroups.length >= 30 ? "text-semantic-rose-c100" : ""
+          }
+        >
+          {allGroups.length} / 30
+        </span>
+      </div>
+
+      {allGroups.length === 0 && !isCreatingFolder && (
+        <div className="px-4 py-2 text-sm text-white/30 italic">
+          {t("bookmarks.folders.empty")}
+        </div>
+      )}
+
+      {allGroups.map((group: string) => {
+        const { name } = parseGroupString(group);
+        const isInGroup = currentGroups.includes(group);
+        return (
+          <ContextMenuItem key={group} onClick={() => toggleGroup(group)}>
+            <Icon
+              icon={isInGroup ? Icons.CHECKMARK : Icons.BOOKMARK}
+              className={classNames(
+                "text-lg w-5",
+                isInGroup ? "text-type-link" : "",
+              )}
+            />
+            <span
+              className={classNames(
+                "flex-1 truncate",
+                isInGroup ? "text-type-link font-medium" : "",
+              )}
+            >
+              {name}
+            </span>
+          </ContextMenuItem>
+        );
+      })}
+
+      {!isCreatingFolder ? (
+        <ContextMenuItem
+          onClick={() => setIsCreatingFolder(true)}
+          className="mt-1"
+          disabled={allGroups.length >= 30}
+        >
+          <Icon icon={Icons.PLUS} className="text-lg w-5" />
+          <span className="flex-1">
+            {t("bookmarks.folders.createFolder")}
+          </span>
+        </ContextMenuItem>
+      ) : (
+        <div className="px-3 py-2 mt-1 bg-white/5 rounded mx-1">
+          <form
+            onSubmit={handleCreateFolder}
+            className="flex gap-2 items-center"
+          >
+            <input
+              autoFocus
+              type="text"
+              placeholder={t("bookmarks.folders.folderNamePlaceholder")}
+              className="w-full bg-transparent outline-none text-sm text-white placeholder-white/30"
+              value={newFolderName}
+              onChange={(e) => setNewFolderName(e.target.value)}
+              onKeyDown={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
+              onContextMenu={(e) => e.stopPropagation()}
+            />
+            <button
+              type="submit"
+              className="text-type-link hover:text-white transition-colors"
+              disabled={!newFolderName.trim()}
+            >
+              <Icon icon={Icons.CHECKMARK} />
+            </button>
+          </form>
+        </div>
+      )}
+    </ContextMenu>
+  );
+
   if (!canLink) {
     return (
       <span
@@ -494,116 +603,7 @@ export function MediaCard(props: MediaCardProps) {
         onContextMenu={handleCardContextMenu}
       >
         {content}
-        {contextMenuPos && (
-          <ContextMenu
-            x={contextMenuPos.x}
-            y={contextMenuPos.y}
-            onClose={() => setContextMenuPos(null)}
-          >
-            <div className="px-3 py-1 mb-1 text-xs text-white/50 font-bold uppercase tracking-wider">
-              {media.title || "Media"}
-            </div>
-            <ContextMenuDivider />
-            <ContextMenuItem onClick={handleShowDetails}>
-              <Icon icon={Icons.CIRCLE_EXCLAMATION} className="text-lg w-5" />
-              <span className="flex-1">{t("bookmarks.folders.moreInfo")}</span>
-            </ContextMenuItem>
-            {props.onEdit && (
-              <ContextMenuItem
-                onClick={() => {
-                  setContextMenuPos(null);
-                  props.onEdit?.();
-                }}
-              >
-                <Icon icon={Icons.EDIT} className="text-lg w-5" />
-                <span className="flex-1">
-                  {t("bookmarks.folders.editDetails")}
-                </span>
-              </ContextMenuItem>
-            )}
-            <ContextMenuDivider />
-
-            <div className="px-3 py-2 text-xs text-white/50 font-bold uppercase tracking-wider flex justify-between items-center">
-              <span>{t("bookmarks.folders.title")}</span>
-              <span
-                className={
-                  allGroups.length >= 30 ? "text-semantic-rose-c100" : ""
-                }
-              >
-                {allGroups.length} / 30
-              </span>
-            </div>
-
-            {allGroups.length === 0 && !isCreatingFolder && (
-              <div className="px-4 py-2 text-sm text-white/30 italic">
-                {t("bookmarks.folders.empty")}
-              </div>
-            )}
-
-            {allGroups.map((group: string) => {
-              const { name } = parseGroupString(group);
-              const isInGroup = currentGroups.includes(group);
-              return (
-                <ContextMenuItem key={group} onClick={() => toggleGroup(group)}>
-                  <Icon
-                    icon={isInGroup ? Icons.CHECKMARK : Icons.BOOKMARK}
-                    className={classNames(
-                      "text-lg w-5",
-                      isInGroup ? "text-type-link" : "",
-                    )}
-                  />
-                  <span
-                    className={classNames(
-                      "flex-1 truncate",
-                      isInGroup ? "text-type-link font-medium" : "",
-                    )}
-                  >
-                    {name}
-                  </span>
-                </ContextMenuItem>
-              );
-            })}
-
-            {!isCreatingFolder ? (
-              <ContextMenuItem
-                onClick={() => setIsCreatingFolder(true)}
-                className="mt-1"
-                disabled={allGroups.length >= 30}
-              >
-                <Icon icon={Icons.PLUS} className="text-lg w-5" />
-                <span className="flex-1">
-                  {t("bookmarks.folders.createFolder")}
-                </span>
-              </ContextMenuItem>
-            ) : (
-              <div className="px-3 py-2 mt-1 bg-white/5 rounded mx-1">
-                <form
-                  onSubmit={handleCreateFolder}
-                  className="flex gap-2 items-center"
-                >
-                  <input
-                    autoFocus
-                    type="text"
-                    placeholder={t("bookmarks.folders.folderNamePlaceholder")}
-                    className="w-full bg-transparent outline-none text-sm text-white placeholder-white/30"
-                    value={newFolderName}
-                    onChange={(e) => setNewFolderName(e.target.value)}
-                    onKeyDown={(e) => e.stopPropagation()}
-                    onClick={(e) => e.stopPropagation()}
-                    onContextMenu={(e) => e.stopPropagation()}
-                  />
-                  <button
-                    type="submit"
-                    className="text-type-link hover:text-white transition-colors"
-                    disabled={!newFolderName.trim()}
-                  >
-                    <Icon icon={Icons.CHECKMARK} />
-                  </button>
-                </form>
-              </div>
-            )}
-          </ContextMenu>
-        )}
+        {contextMenuEl}
       </span>
     );
   }
@@ -620,116 +620,7 @@ export function MediaCard(props: MediaCardProps) {
       onContextMenu={handleCardContextMenu}
     >
       {content}
-      {contextMenuPos && (
-        <ContextMenu
-          x={contextMenuPos.x}
-          y={contextMenuPos.y}
-          onClose={() => setContextMenuPos(null)}
-        >
-          <div className="px-3 py-1 mb-1 text-xs text-white/50 font-bold uppercase tracking-wider">
-            {media.title || "Media"}
-          </div>
-          <ContextMenuDivider />
-          <ContextMenuItem onClick={handleShowDetails}>
-            <Icon icon={Icons.CIRCLE_EXCLAMATION} className="text-lg w-5" />
-            <span className="flex-1">{t("bookmarks.folders.moreInfo")}</span>
-          </ContextMenuItem>
-          {props.onEdit && (
-            <ContextMenuItem
-              onClick={() => {
-                setContextMenuPos(null);
-                props.onEdit?.();
-              }}
-            >
-              <Icon icon={Icons.EDIT} className="text-lg w-5" />
-              <span className="flex-1">
-                {t("bookmarks.folders.editDetails")}
-              </span>
-            </ContextMenuItem>
-          )}
-          <ContextMenuDivider />
-
-          <div className="px-3 py-2 text-xs text-white/50 font-bold uppercase tracking-wider flex justify-between items-center">
-            <span>{t("bookmarks.folders.title")}</span>
-            <span
-              className={
-                allGroups.length >= 30 ? "text-semantic-rose-c100" : ""
-              }
-            >
-              {allGroups.length} / 30
-            </span>
-          </div>
-
-          {allGroups.length === 0 && !isCreatingFolder && (
-            <div className="px-4 py-2 text-sm text-white/30 italic">
-              {t("bookmarks.folders.empty")}
-            </div>
-          )}
-
-          {allGroups.map((group: string) => {
-            const { name } = parseGroupString(group);
-            const isInGroup = currentGroups.includes(group);
-            return (
-              <ContextMenuItem key={group} onClick={() => toggleGroup(group)}>
-                <Icon
-                  icon={isInGroup ? Icons.CHECKMARK : Icons.BOOKMARK}
-                  className={classNames(
-                    "text-lg w-5",
-                    isInGroup ? "text-type-link" : "",
-                  )}
-                />
-                <span
-                  className={classNames(
-                    "flex-1 truncate",
-                    isInGroup ? "text-type-link font-medium" : "",
-                  )}
-                >
-                  {name}
-                </span>
-              </ContextMenuItem>
-            );
-          })}
-
-          {!isCreatingFolder ? (
-            <ContextMenuItem
-              onClick={() => setIsCreatingFolder(true)}
-              className="mt-1"
-              disabled={allGroups.length >= 30}
-            >
-              <Icon icon={Icons.PLUS} className="text-lg w-5" />
-              <span className="flex-1">
-                {t("bookmarks.folders.createFolder")}
-              </span>
-            </ContextMenuItem>
-          ) : (
-            <div className="px-3 py-2 mt-1 bg-white/5 rounded mx-1">
-              <form
-                onSubmit={handleCreateFolder}
-                className="flex gap-2 items-center"
-              >
-                <input
-                  autoFocus
-                  type="text"
-                  placeholder={t("bookmarks.folders.folderNamePlaceholder")}
-                  className="w-full bg-transparent outline-none text-sm text-white placeholder-white/30"
-                  value={newFolderName}
-                  onChange={(e) => setNewFolderName(e.target.value)}
-                  onKeyDown={(e) => e.stopPropagation()}
-                  onClick={(e) => e.stopPropagation()}
-                  onContextMenu={(e) => e.stopPropagation()}
-                />
-                <button
-                  type="submit"
-                  className="text-type-link hover:text-white transition-colors"
-                  disabled={!newFolderName.trim()}
-                >
-                  <Icon icon={Icons.CHECKMARK} />
-                </button>
-              </form>
-            </div>
-          )}
-        </ContextMenu>
-      )}
+      {contextMenuEl}
     </Link>
   );
 }

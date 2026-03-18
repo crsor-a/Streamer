@@ -24,7 +24,7 @@ import { useModal } from "@/components/overlays/Modal";
 import { useBookmarkStore } from "@/stores/bookmarks";
 import { useGroupOrderStore } from "@/stores/groupOrder";
 import { useProgressStore } from "@/stores/progress";
-import { parseGroupString } from "@/utils/groups";
+import { parseGroupString } from "@/utils/bookmarkModifications";
 import { SortOption } from "@/utils/mediaSorting";
 import { MediaItem } from "@/utils/mediaTypes";
 

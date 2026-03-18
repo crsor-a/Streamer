@@ -8,7 +8,16 @@ import {
   primaryOptions,
   secondaryOptions,
   tertiaryOptions,
+  parts,
 } from "@themes/custom";
+
+function hexToRgbString(hex: string): string {
+  const clean = hex.replace("#", "");
+  const r = parseInt(clean.substring(0, 2), 16);
+  const g = parseInt(clean.substring(2, 4), 16);
+  const b = parseInt(clean.substring(4, 6), 16);
+  return `${r} ${g} ${b}`;
+}
 
 export interface SavedCustomTheme {
   id: string;
@@ -16,6 +25,9 @@ export interface SavedCustomTheme {
   primary: string;
   secondary: string;
   tertiary: string;
+  customPrimaryHex?: string;
+  customSecondaryHex?: string;
+  customTertiaryHex?: string;
 }
 
 export interface ThemeStore {
@@ -166,7 +178,32 @@ export function ThemeProvider(props: {
     const tertiary =
       tertiaryOptions.find((o) => o.id === savedTheme.tertiary)?.colors || {};
 
-    const vars = { ...primary, ...secondary, ...tertiary };
+    const vars: Record<string, string> = {
+      ...primary,
+      ...secondary,
+      ...tertiary,
+    };
+
+    // Override with custom hex colors when set
+    if (savedTheme.customPrimaryHex) {
+      const rgb = hexToRgbString(savedTheme.customPrimaryHex);
+      parts.primary.forEach((key) => {
+        vars[`--colors-${key.replace(/\./g, "-")}`] = rgb;
+      });
+    }
+    if (savedTheme.customSecondaryHex) {
+      const rgb = hexToRgbString(savedTheme.customSecondaryHex);
+      parts.secondary.forEach((key) => {
+        vars[`--colors-${key.replace(/\./g, "-")}`] = rgb;
+      });
+    }
+    if (savedTheme.customTertiaryHex) {
+      const rgb = hexToRgbString(savedTheme.customTertiaryHex);
+      parts.tertiary.forEach((key) => {
+        vars[`--colors-${key.replace(/\./g, "-")}`] = rgb;
+      });
+    }
+
     const cssVars = Object.entries(vars)
       .map(([k, v]) => `${k}: ${v};`)
       .join(" ");
