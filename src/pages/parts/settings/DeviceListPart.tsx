@@ -79,7 +79,8 @@ export function DeviceListPart(props: {
       const parts = session.device?.split(".");
       if (!parts || parts.length !== 3) {
         // Legacy plaintext device name (stored before encryption was added)
-        decryptedName = session.device || t("settings.account.devices.unknownDevice");
+        decryptedName =
+          session.device || t("settings.account.devices.unknownDevice");
       } else {
         try {
           decryptedName = decryptData(session.device, base64ToBuffer(seed));

@@ -4,6 +4,10 @@ import loadVersion from "vite-plugin-package-version";
 import { VitePWA } from "vite-plugin-pwa";
 import checker from "vite-plugin-checker";
 import path from "path";
+<<<<<<< HEAD
+=======
+
+>>>>>>> bbf192b4 (Update vite.config.mts)
 import { handlebars } from "./plugins/handlebars";
 import { PluginOption, loadEnv, splitVendorChunkPlugin } from "vite";
 import { visualizer } from "rollup-plugin-visualizer";
@@ -25,6 +29,10 @@ export default defineConfig(({ mode }) => {
   return {
     base: env.VITE_BASE_URL || "/",
     plugins: [
+<<<<<<< HEAD
+=======
+      
+>>>>>>> bbf192b4 (Update vite.config.mts)
       handlebars({
         vars: {
           opensearchEnabled: env.VITE_OPENSEARCH_ENABLED === "true",
@@ -175,10 +183,17 @@ export default defineConfig(({ mode }) => {
     test: {
       environment: "jsdom",
     },
+<<<<<<< HEAD
     preview: {
   host: true,
   port: 80,
   allowedHosts: ["pstream.net"]
 },
+=======
+ preview: {
+  host: true,
+  port: 80,
+  allowedHosts: ["pstream.net, pstream-test.vercel.app"]
+>>>>>>> bbf192b4 (Update vite.config.mts)
   };
 });

@@ -5,10 +5,10 @@ import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
 import {
+  parts,
   primaryOptions,
   secondaryOptions,
   tertiaryOptions,
-  parts,
 } from "@themes/custom";
 
 function hexToRgbString(hex: string): string {

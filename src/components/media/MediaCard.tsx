@@ -502,9 +502,7 @@ export function MediaCard(props: MediaCardProps) {
           }}
         >
           <Icon icon={Icons.EDIT} className="text-lg w-5" />
-          <span className="flex-1">
-            {t("bookmarks.folders.editDetails")}
-          </span>
+          <span className="flex-1">{t("bookmarks.folders.editDetails")}</span>
         </ContextMenuItem>
       )}
       <ContextMenuDivider />
@@ -512,9 +510,7 @@ export function MediaCard(props: MediaCardProps) {
       <div className="px-3 py-2 text-xs text-white/50 font-bold uppercase tracking-wider flex justify-between items-center">
         <span>{t("bookmarks.folders.title")}</span>
         <span
-          className={
-            allGroups.length >= 30 ? "text-semantic-rose-c100" : ""
-          }
+          className={allGroups.length >= 30 ? "text-semantic-rose-c100" : ""}
         >
           {allGroups.length} / 30
         </span>
@@ -557,9 +553,7 @@ export function MediaCard(props: MediaCardProps) {
           disabled={allGroups.length >= 30}
         >
           <Icon icon={Icons.PLUS} className="text-lg w-5" />
-          <span className="flex-1">
-            {t("bookmarks.folders.createFolder")}
-          </span>
+          <span className="flex-1">{t("bookmarks.folders.createFolder")}</span>
         </ContextMenuItem>
       ) : (
         <div className="px-3 py-2 mt-1 bg-white/5 rounded mx-1">
