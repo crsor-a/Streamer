@@ -42,7 +42,7 @@ importers:
       '@noble/hashes':
         specifier: ^1.8.0
         version: 1.8.0
-      '@p-stream/providers':
+      '@Streamer/providers':
         specifier: github:xp-technologies-dev/providers#production
         version: https://codeload.github.com/xp-technologies-dev/providers/tar.gz/0cec62538f1aee5bb785b89f26ca76bac87ce796
       '@plasmohq/messaging':
@@ -1481,7 +1481,7 @@ packages:
     resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
     engines: {node: '>=12.4.0'}
 
-  '@p-stream/providers@https://codeload.github.com/xp-technologies-dev/providers/tar.gz/0cec62538f1aee5bb785b89f26ca76bac87ce796':
+  '@Streamer/providers@https://codeload.github.com/xp-technologies-dev/providers/tar.gz/0cec62538f1aee5bb785b89f26ca76bac87ce796':
     resolution: {tarball: https://codeload.github.com/xp-technologies-dev/providers/tar.gz/0cec62538f1aee5bb785b89f26ca76bac87ce796}
     version: 3.2.0
 
@@ -6502,7 +6502,7 @@ snapshots:
 
   '@nolyfill/is-core-module@1.0.39': {}
 
-  '@p-stream/providers@https://codeload.github.com/xp-technologies-dev/providers/tar.gz/0cec62538f1aee5bb785b89f26ca76bac87ce796':
+  '@Streamer/providers@https://codeload.github.com/xp-technologies-dev/providers/tar.gz/0cec62538f1aee5bb785b89f26ca76bac87ce796':
     dependencies:
       abort-controller: 3.0.0
       cheerio: 1.0.0-rc.12

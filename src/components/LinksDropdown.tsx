@@ -335,7 +335,7 @@ export function LinksDropdown(props: { children: React.ReactNode }) {
             }}
             icon={Icons.RISING_STAR}
           >
-            P-Stream Revival
+            Streamer Revival
           </DropdownLink>
           {!enableLowPerformanceMode && (
             <DropdownLink href="/discover" icon={Icons.RISING_STAR}>
